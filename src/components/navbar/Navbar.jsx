@@ -2,6 +2,7 @@ import './navbar.css';
 import React, { useState } from 'react'
 import { RiMenu3Line, RiCloseLine } from 'react-icons/ri';
 import logo from "../../assets/GPT-3.svg";
+import axios from 'axios';
 
 const Menu = () => (
   <>
@@ -16,6 +17,22 @@ const Menu = () => (
 const Navbar = () => {
 
   const [toggleMenu, setToggleMenu] = useState(false);
+
+  const handlePayment= async () => {
+    // console.log("Calling the stripe..")
+    await axios.post("https://paymentgateway-evok.onrender.com/create-checkout-session",
+      {"items":[{"id":1,"quantity":1}]}
+    ,{
+      headers:{
+        "Content-Type":"application/json"
+      }
+    }).then(res => {
+       window.location = res.data.url
+    }).catch(e => {
+      console.log(e.error)
+    })
+  }
+
   return (
     <div className='gpt3__navbar'>
       <div className='gpt3__navbar-links'>
@@ -27,8 +44,8 @@ const Navbar = () => {
         </div>
       </div>
       <div className='gpt3__navbar-sign'>
-        <p>Sign in</p>
-        <button type='button'>Sign up</button>
+        {/* <p>Sign in</p> */}
+        <button type='button' onClick= {handlePayment}>Payment</button>
       </div>
       <div className='gpt3__navbar-menu'>
         {toggleMenu ?
@@ -40,15 +57,13 @@ const Navbar = () => {
             <div className='gpt3__navbar-menu_container-links'>
               < Menu />
               <div className='gpt3__navbar-menu_container-links-sign'>
-                <p>Sign in</p>
-                <button type='button'>Sign up</button>
+     
+                <button type='button' onClick= {handlePayment}>Payment</button>
               </div>
             </div>
           </div>
         )}
       </div>
-
-
     </div>
   )
 }
